@@ -297,6 +297,11 @@ class RecipeCreateSerializer(ModelSerializer):
         if tags is not None:
             instance.tags.set(tags)
         ingredients = validated_data.pop('ingredients', None)
+
+        name = validated_data.get('name')
+        if Recipe.objects.filter(name=name).exists():
+            raise ValidationError({'name': 'Название рецепта уже существует'})
+
         if ingredients is not None:
             instance.ingredients.clear()
             for ingredient in ingredients:
